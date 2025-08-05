@@ -1,34 +1,29 @@
 import React, { useState } from 'react';
-import { Archive, NewArchive } from '../../types';
+import { Archive } from '../../types';
 import { mockArchives } from '../../data/mockData';
 import { translations } from '../../translations';
 import { useLanguageStore } from '../../store/languageStore';
 import { ArchiveList } from './ArchiveList';
 import { ArchiveModal } from './ArchiveModal';
-import { AddArchiveModal } from './AddArchiveModal';
-import { QrCodeModal } from './QrCodeModal';
+// import { QrCodeModal } from './QrCodeModal';
 import { ExportProgressModal } from './ExportProgressModal';
 
 interface ArchivesProps {
   isDark: boolean;
-  showAddArchive: boolean;
-  onCloseAddArchive: () => void;
 }
 
-export const Archives: React.FC<ArchivesProps> = ({ 
-  isDark, 
-  showAddArchive, 
-  onCloseAddArchive 
+export const Archives: React.FC<ArchivesProps> = ({
+  isDark,
 }) => {
   const { language } = useLanguageStore();
   const t = translations[language];
-  
+
   const [selectedArchive, setSelectedArchive] = useState<Archive | null>(null);
   const [selectedArchives, setSelectedArchives] = useState<Archive[]>([]);
   const [showExportProgress, setShowExportProgress] = useState(false);
   const [exportProgress, setExportProgress] = useState(0);
-  const [qrCodeData, setQrCodeData] = useState('');
-  const [showQrCode, setShowQrCode] = useState(false);
+  // const [qrCodeData, setQrCodeData] = useState('');
+  // const [showQrCode, setShowQrCode] = useState(false);
 
   const handleView = (archive: Archive) => {
     setSelectedArchive(archive);
@@ -84,30 +79,15 @@ export const Archives: React.FC<ArchivesProps> = ({
     });
   };
 
-  const generateQrCode = (archiveData: any) => {
-    const qrData = `archive:${archiveData.title}-${Date.now()}`;
-    setQrCodeData(qrData);
-    setShowQrCode(true);
-  };
+  // const generateQrCode = (archiveData: any) => {
+  //   const qrData = `archive:${archiveData.title}-${Date.now()}`;
+  //   setQrCodeData(qrData);
+  //   setShowQrCode(true);
+  // };
 
-  const handleSubmitArchive = (newArchive: NewArchive) => {
-    const archiveData = {
-      ...newArchive,
-      id: Date.now(),
-      date: new Date().toISOString(),
-      type: newArchive.file?.type || 'Unknown',
-      size: newArchive.file?.size ? `${(newArchive.file.size / 1024 / 1024).toFixed(2)} MB` : 'Unknown',
-      author: 'Current User'
-    };
-
-    console.log('Submitting new archive:', archiveData);
-    generateQrCode(archiveData);
-    onCloseAddArchive();
-  };
-
-  const closeQrModal = () => {
-    setShowQrCode(false);
-  };
+  // const closeQrModal = () => {
+  //   setShowQrCode(false);
+  // };
 
   return (
     <>
@@ -131,21 +111,13 @@ export const Archives: React.FC<ArchivesProps> = ({
         />
       )}
 
-      {showAddArchive && (
-        <AddArchiveModal
-          isDark={isDark}
-          onClose={onCloseAddArchive}
-          onSubmit={handleSubmitArchive}
-        />
-      )}
-
-      {showQrCode && (
+      {/* {showQrCode && (
         <QrCodeModal
           qrCodeData={qrCodeData}
           isDark={isDark}
           onClose={closeQrModal}
         />
-      )}
+      )} */}
 
       {showExportProgress && (
         <ExportProgressModal
