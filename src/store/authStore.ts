@@ -1,6 +1,6 @@
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-import { User, LoginCredentials } from '../types';
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
+import { User, LoginCredentials } from "../types";
 
 interface AuthStore {
   user: User | null;
@@ -14,16 +14,16 @@ interface AuthStore {
 // Mock users for demonstration
 const mockUsers: User[] = [
   {
-    id: '1',
-    email: 'admin@example.com',
-    name: 'Admin User',
-    role: 'admin',
+    id: "1",
+    email: "admin@example.com",
+    name: "Admin User",
+    role: "admin",
   },
   {
-    id: '2',
-    email: 'user@example.com',
-    name: 'Regular User',
-    role: 'user',
+    id: "2",
+    email: "user@example.com",
+    name: "Regular User",
+    role: "user",
   },
 ];
 
@@ -36,20 +36,22 @@ export const useAuthStore = create<AuthStore>()(
 
       login: async (credentials: LoginCredentials) => {
         set({ isLoading: true });
-        
+
         // Simulate API call delay
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+
         // Mock authentication - in real app, this would be an API call
         const user = mockUsers.find(
-          u => u.email === credentials.email && credentials.password === 'password123'
+          (u) =>
+            u.email === credentials.email &&
+            credentials.password === "password123"
         );
-        
+
         if (user) {
-          set({ 
-            user, 
-            isAuthenticated: true, 
-            isLoading: false 
+          set({
+            user,
+            isAuthenticated: true,
+            isLoading: false,
           });
           return true;
         } else {
@@ -59,10 +61,10 @@ export const useAuthStore = create<AuthStore>()(
       },
 
       logout: () => {
-        set({ 
-          user: null, 
-          isAuthenticated: false, 
-          isLoading: false 
+        set({
+          user: null,
+          isAuthenticated: false,
+          isLoading: false,
         });
       },
 
@@ -71,10 +73,10 @@ export const useAuthStore = create<AuthStore>()(
       },
     }),
     {
-      name: 'auth-storage',
-      partialize: (state) => ({ 
-        user: state.user, 
-        isAuthenticated: state.isAuthenticated 
+      name: "auth-storage",
+      partialize: (state) => ({
+        user: state.user,
+        isAuthenticated: state.isAuthenticated,
       }),
     }
   )
