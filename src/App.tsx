@@ -7,7 +7,7 @@ import { Header } from "./components/Header";
 import { LoginPage } from "./components/LoginPage";
 import { Dashboard } from "./components/Dashboard";
 import { Archives } from "./components/Archives/Archives";
-import { Users } from "./components/Users";
+import { Users } from "./components/Users/Users";
 import { Settings } from "./components/Settings";
 import { AddArchiveModal } from "./components/Archives/AddArchiveModal";
 

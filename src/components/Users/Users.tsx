@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Users as UsersIcon,
   UserPlus,
@@ -6,8 +6,10 @@ import {
   Trash2,
   SquarePen,
 } from "lucide-react";
-import { translations } from "../translations";
-import { useLanguageStore } from "../store/languageStore";
+import { translations } from "../../translations";
+import { useLanguageStore } from "../../store/languageStore";
+import { AddUserModal } from "./AddUserModal";
+import { NewUser } from "../../types";
 
 interface UsersProps {
   isDark: boolean;
@@ -40,6 +42,24 @@ const mockUsers = [
 export const Users: React.FC<UsersProps> = ({ isDark }) => {
   const { language } = useLanguageStore();
   const t = translations[language];
+  const [showAddUser, setShowAddUser] = useState(false);
+  const [showEditUser, setShowEditUser] = useState(false);
+
+  const handleSubmitUser = (newUser: NewUser) => {
+    const userData = {
+      ...newUser,
+      id: Date.now(),
+      date: new Date().toISOString(),
+    };
+
+    console.log("Submitting new user:", userData);
+  };
+
+  const handleDelete = (newUser: NewUser) => {
+    if (window.confirm(t.confirmDeleteUser)) {
+      console.log("Deleting user:", newUser);
+    }
+  };
 
   return (
     <div
@@ -52,9 +72,12 @@ export const Users: React.FC<UsersProps> = ({ isDark }) => {
           <UsersIcon className="h-6 w-6 mr-3" />
           <h2 className="text-xl font-semibold">{t.users}</h2>
         </div>
-        <button className="flex items-center bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+        <button
+          className="flex items-center bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+          onClick={() => setShowAddUser(true)}
+        >
           <UserPlus className="h-5 w-5 mr-2" />
-          Add User
+          {t.addNewUser}
         </button>
       </div>
 
@@ -139,13 +162,15 @@ export const Users: React.FC<UsersProps> = ({ isDark }) => {
                   <div className="flex justify-end space-x-2">
                     <button
                       className="p-2 rounded-lg text-blue-500 hover:bg-blue-500 hover:bg-opacity-20"
-                      title="Send Email"
+                      title="Edit User"
+                      onClick={() => setShowAddUser(true)}
                     >
                       <SquarePen className="h-5 w-5" />
                     </button>
                     <button
                       className="p-2 rounded-lg text-red-500 hover:bg-red-500 hover:bg-opacity-20"
-                      title="Manage Permissions"
+                      title="Delete user"
+                      onClick={() => handleDelete(user)}
                     >
                       <Trash2 className="h-5 w-5" />
                     </button>
@@ -156,6 +181,20 @@ export const Users: React.FC<UsersProps> = ({ isDark }) => {
           </tbody>
         </table>
       </div>
+      {showAddUser && (
+        <AddUserModal
+          isDark={isDark}
+          onClose={() => setShowAddUser(false)}
+          onSubmit={handleSubmitUser}
+        />
+      )}
+      {showEditUser && (
+        <AddUserModal
+          isDark={isDark}
+          onClose={() => setShowEditUser(false)}
+          onSubmit={handleSubmitUser}
+        />
+      )}
     </div>
   );
 };
