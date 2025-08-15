@@ -1,17 +1,4 @@
-<<<<<<< HEAD
-import React, { useState } from 'react';
-import { ViewType } from './types';
-import { useTheme } from './hooks/useTheme';
-import { useAuthStore } from './store/authStore';
-import { Sidebar } from './components/Sidebar';
-import { Header } from './components/Header';
-// import { LoginPage } from './components/LoginPage';
-import { Dashboard } from './components/Dashboard';
-import { Archives } from './components/Archives/Archives';
-import { Users } from './components/Users';
-import { Settings } from './components/Settings';
-=======
-import { useState } from "react";
+import React, { useState } from "react";
 import { NewArchive, ViewType } from "./types";
 import { useTheme } from "./hooks/useTheme";
 import { useAuthStore } from "./store/authStore";
@@ -23,7 +10,6 @@ import { Archives } from "./components/Archives/Archives";
 import { Users } from "./components/Users/Users";
 import { Settings } from "./components/Settings";
 import { AddArchiveModal } from "./components/Archives/AddArchiveModal";
->>>>>>> 954ed46a1601fd0308e58e4a2defc462aada9ff9
 
 function App() {
   const { isDark, toggleTheme } = useTheme();
@@ -33,7 +19,7 @@ function App() {
 
   // Show login page if not authenticated
   if (!isAuthenticated) {
-    // return <LoginPage />;
+    return <LoginPage />;
   }
 
   const handleSubmitArchive = (newArchive: NewArchive) => {
