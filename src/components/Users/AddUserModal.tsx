@@ -1,16 +1,16 @@
 import React, { useState } from "react";
-import { X, Upload } from "lucide-react";
-import { NewArchive } from "../../types";
+import { X } from "lucide-react";
+import { NewUser } from "../../types";
 import { translations } from "../../translations";
 import { useLanguageStore } from "../../store/languageStore";
 
-interface AddArchiveModalProps {
+interface NewUserModalProps {
   isDark: boolean;
   onClose: () => void;
-  onSubmit: (archive: NewArchive) => void;
+  onSubmit: (user: NewUser) => void;
 }
 
-export const AddArchiveModal: React.FC<AddArchiveModalProps> = ({
+export const AddUserModal: React.FC<NewUserModalProps> = ({
   isDark,
   onClose,
   onSubmit,
@@ -18,22 +18,16 @@ export const AddArchiveModal: React.FC<AddArchiveModalProps> = ({
   const { language } = useLanguageStore();
   const t = translations[language];
 
-  const [newArchive, setNewArchive] = useState<NewArchive>({
-    title: "",
-    description: "",
-    category: "",
-    recipients: "",
-    file: null,
+  const [newUser, setNewUser] = useState<NewUser>({
+    name: "",
+    email: "",
+    password: "",
+    role: "",
   });
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0] || null;
-    setNewArchive((prev) => ({ ...prev, file }));
-  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(newArchive);
+    onSubmit(newUser);
   };
 
   return (
@@ -44,7 +38,7 @@ export const AddArchiveModal: React.FC<AddArchiveModalProps> = ({
         } rounded-lg shadow-xl max-w-2xl w-full p-6`}
       >
         <div className="flex justify-between items-center mb-6">
-          <h3 className="text-xl font-semibold">{t.addNewArchive}</h3>
+          <h3 className="text-xl font-semibold">{t.addNewUser}</h3>
           <button
             onClick={onClose}
             className="p-1 rounded-lg hover:bg-opacity-20 hover:bg-gray-500"
@@ -56,13 +50,57 @@ export const AddArchiveModal: React.FC<AddArchiveModalProps> = ({
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium mb-1">
-                {t.archiveTitle}
+                {t.userName}
               </label>
               <input
                 type="text"
-                value={newArchive.title}
+                value={newUser.name}
                 onChange={(e) =>
-                  setNewArchive((prev) => ({ ...prev, title: e.target.value }))
+                  setNewUser((prev) => ({ ...prev, name: e.target.value }))
+                }
+                className={`w-full p-2 rounded-lg border ${
+                  isDark
+                    ? "bg-gray-700 border-gray-600"
+                    : "bg-white border-gray-300"
+                }`}
+                required
+                placeholder="John"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">
+                {t.userEmail}
+              </label>
+              <input
+                type="email"
+                value={newUser.email}
+                onChange={(e) =>
+                  setNewUser((prev) => ({
+                    ...prev,
+                    email: e.target.value,
+                  }))
+                }
+                className={`w-full p-2 rounded-lg border ${
+                  isDark
+                    ? "bg-gray-700 border-gray-600"
+                    : "bg-white border-gray-300"
+                }`}
+                placeholder="email@example.com"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">
+                {t.userPassword}
+              </label>
+              <input
+                type="password"
+                value={newUser.password}
+                onChange={(e) =>
+                  setNewUser((prev) => ({
+                    ...prev,
+                    password: e.target.value,
+                  }))
                 }
                 className={`w-full p-2 rounded-lg border ${
                   isDark
@@ -74,14 +112,14 @@ export const AddArchiveModal: React.FC<AddArchiveModalProps> = ({
             </div>
             <div>
               <label className="block text-sm font-medium mb-1">
-                {t.description}
+                {t.userRole}
               </label>
-              <textarea
-                value={newArchive.description}
+              <select
+                name="role"
                 onChange={(e) =>
-                  setNewArchive((prev) => ({
+                  setNewUser((prev) => ({
                     ...prev,
-                    description: e.target.value,
+                    role: e.target.value,
                   }))
                 }
                 className={`w-full p-2 rounded-lg border ${
@@ -89,82 +127,12 @@ export const AddArchiveModal: React.FC<AddArchiveModalProps> = ({
                     ? "bg-gray-700 border-gray-600"
                     : "bg-white border-gray-300"
                 }`}
-                rows={3}
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">
-                {t.category}
-              </label>
-              <input
-                type="text"
-                value={newArchive.category}
-                onChange={(e) =>
-                  setNewArchive((prev) => ({
-                    ...prev,
-                    category: e.target.value,
-                  }))
-                }
-                className={`w-full p-2 rounded-lg border ${
-                  isDark
-                    ? "bg-gray-700 border-gray-600"
-                    : "bg-white border-gray-300"
-                }`}
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">
-                {t.recipients}
-              </label>
-              <input
-                type="text"
-                value={newArchive.recipients}
-                onChange={(e) =>
-                  setNewArchive((prev) => ({
-                    ...prev,
-                    recipients: e.target.value,
-                  }))
-                }
-                className={`w-full p-2 rounded-lg border ${
-                  isDark
-                    ? "bg-gray-700 border-gray-600"
-                    : "bg-white border-gray-300"
-                }`}
-                placeholder="email@example.com, email2@example.com"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">
-                {t.archiveFile}
-              </label>
-              <div
-                className={`border-2 border-dashed rounded-lg p-6 text-center ${
-                  isDark ? "border-gray-600" : "border-gray-300"
-                }`}
+                required
               >
-                <input
-                  type="file"
-                  onChange={handleFileChange}
-                  className="hidden"
-                  id="archive-file"
-                />
-                <label htmlFor="archive-file" className="cursor-pointer">
-                  <Upload className="h-12 w-12 mx-auto mb-2 text-gray-400" />
-                  <p className="text-sm text-gray-500">{t.dragAndDrop}</p>
-                  <p className="text-sm text-gray-500">{t.or}</p>
-                  <button
-                    type="button"
-                    className="text-blue-500 hover:text-blue-600"
-                  >
-                    {t.browse}
-                  </button>
-                </label>
-                {newArchive.file && (
-                  <p className="mt-2 text-sm text-gray-500">
-                    {t.selectedFile}: {newArchive.file.name}
-                  </p>
-                )}
-              </div>
+                <option value="">{t.userRoleOpt}</option>
+                <option value={t.userRole1}>{t.userRole1}</option>
+                <option value={t.userRole2}>{t.userRole2}</option>
+              </select>
             </div>
           </div>
           <div className="mt-6 flex justify-end space-x-3">

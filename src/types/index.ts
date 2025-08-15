@@ -24,16 +24,23 @@ export interface NewArchive {
   file: File | null;
 }
 
-export type ViewType = 'dashboard' | 'archives' | 'users' | 'settings';
-export type FilterType = 'all' | 'pdf' | 'doc';
-export type SortBy = 'date' | 'type' | 'author';
-export type SortOrder = 'ascending' | 'descending';
+export interface NewUser {
+  name: string;
+  email: string;
+  password: string;
+  role: string;
+}
+
+export type ViewType = "dashboard" | "archives" | "users" | "settings";
+export type FilterType = "all" | "pdf" | "doc";
+export type SortBy = "date" | "type" | "author";
+export type SortOrder = "ascending" | "descending";
 
 export interface User {
   id: string;
   email: string;
   name: string;
-  role: 'admin' | 'user';
+  role: "admin" | "user";
 }
 
 export interface LoginCredentials {
