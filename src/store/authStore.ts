@@ -1,68 +1,72 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { User, LoginCredentials } from '../types';
+import { supabase } from '../lib/supabase'; // <-- important
 
 interface AuthStore {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (credentials: LoginCredentials) => Promise<boolean>;
-  logout: () => void;
+  logout: () => Promise<void>;
   setLoading: (loading: boolean) => void;
 }
 
-// Mock users for demonstration
-const mockUsers: User[] = [
-  {
-    id: '1',
-    email: 'admin@example.com',
-    name: 'Admin User',
-    role: 'admin',
-  },
-  {
-    id: '2',
-    email: 'user@example.com',
-    name: 'Regular User',
-    role: 'user',
-  },
-];
-
 export const useAuthStore = create<AuthStore>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       user: null,
       isAuthenticated: false,
       isLoading: false,
 
       login: async (credentials: LoginCredentials) => {
         set({ isLoading: true });
-        
-        // Simulate API call delay
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        // Mock authentication - in real app, this would be an API call
-        const user = mockUsers.find(
-          u => u.email === credentials.email && credentials.password === 'password123'
-        );
-        
-        if (user) {
-          set({ 
-            user, 
-            isAuthenticated: true, 
-            isLoading: false 
-          });
-          return true;
-        } else {
+
+        // Authentification via Supabase
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email: credentials.email,
+          password: credentials.password,
+        });
+
+        if (error || !data.user) {
           set({ isLoading: false });
           return false;
         }
+
+        // Récupérer les infos du profil (depuis une table "profiles")
+        const { data: profileData, error: profileError } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', data.user.id)
+          .single();
+
+        if (profileError || !profileData) {
+          set({ isLoading: false });
+          return false;
+        }
+
+        const user: User = {
+          id: data.user.id,
+          email: data.user.email!,
+          name: profileData.name,
+          role: profileData.role,
+        };
+
+        set({
+          user,
+          isAuthenticated: true,
+          isLoading: false,
+        });
+
+        return true;
       },
 
-      logout: () => {
-        set({ 
-          user: null, 
-          isAuthenticated: false, 
-          isLoading: false 
+      logout: async () => {
+        await supabase.auth.signOut();
+        set({
+          user: null,
+          isAuthenticated: false,
+          isLoading: false,
         });
       },
 
@@ -72,9 +76,9 @@ export const useAuthStore = create<AuthStore>()(
     }),
     {
       name: 'auth-storage',
-      partialize: (state) => ({ 
-        user: state.user, 
-        isAuthenticated: state.isAuthenticated 
+      partialize: (state) => ({
+        user: state.user,
+        isAuthenticated: state.isAuthenticated,
       }),
     }
   )

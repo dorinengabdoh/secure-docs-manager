@@ -4,7 +4,7 @@ import { useTheme } from './hooks/useTheme';
 import { useAuthStore } from './store/authStore';
 import { Sidebar } from './components/Sidebar';
 import { Header } from './components/Header';
-import { LoginPage } from './components/LoginPage';
+// import { LoginPage } from './components/LoginPage';
 import { Dashboard } from './components/Dashboard';
 import { Archives } from './components/Archives/Archives';
 import { Users } from './components/Users';
@@ -18,7 +18,7 @@ function App() {
 
   // Show login page if not authenticated
   if (!isAuthenticated) {
-    return <LoginPage />;
+    // return <LoginPage />;
   }
 
   const renderCurrentView = () => {
