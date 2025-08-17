@@ -19,8 +19,15 @@ export interface Notification {
 export interface NewArchive {
   title: string;
   description: string;
-  category: string;
-  recipients: string;
+  // category: string;
+  // recipient: string;
+  file: File | null;
+}
+
+export interface SendArchive {
+  subject: string;
+  description: string;
+  recipient: string;
   file: File | null;
 }
 
@@ -29,6 +36,7 @@ export interface NewUser {
   email: string;
   password: string;
   role: string;
+  status: string;
 }
 
 export type ViewType = "dashboard" | "archives" | "users" | "settings";

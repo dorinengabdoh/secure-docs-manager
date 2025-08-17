@@ -1,8 +1,15 @@
 import React, { useState } from "react";
 import { Eye, Download, Trash2, Filter, ArrowUpDown, Mail } from "lucide-react";
-import { Archive, FilterType, SortBy, SortOrder } from "../../types";
+import {
+  Archive,
+  FilterType,
+  SendArchive,
+  SortBy,
+  SortOrder,
+} from "../../types";
 import { translations } from "../../translations";
 import { useLanguageStore } from "../../store/languageStore";
+import { SendArchiveModal } from "./SendArchiveModal";
 
 interface ArchiveListProps {
   archives: Archive[];
@@ -31,6 +38,7 @@ export const ArchiveList: React.FC<ArchiveListProps> = ({
   const [filterType, setFilterType] = useState<FilterType>("all");
   const [sortBy, setSortBy] = useState<SortBy>("date");
   const [sortOrder, setSortOrder] = useState<SortOrder>("descending");
+  const [showAddArchive, setShowSendArchive] = useState(false);
 
   const filteredArchives = archives
     .filter(
@@ -62,6 +70,21 @@ export const ArchiveList: React.FC<ArchiveListProps> = ({
         }
       });
     }
+  };
+
+  const handleSubmitArchive = (sendArchive: SendArchive) => {
+    const archiveData = {
+      ...sendArchive,
+      id: Date.now(),
+      date: new Date().toISOString(),
+      type: sendArchive.file?.type || "Unknown",
+      size: sendArchive.file?.size
+        ? `${(sendArchive.file.size / 1024 / 1024).toFixed(2)} MB`
+        : "Unknown",
+      author: "Current User",
+    };
+
+    console.log("Submitting new archive:", archiveData);
   };
 
   return (
@@ -116,7 +139,7 @@ export const ArchiveList: React.FC<ArchiveListProps> = ({
           </button>
         </div>
         <button
-          // onClick={onExport}
+          onClick={() => setShowSendArchive(true)}
           className={`flex items-center px-4 py-2 rounded-lg ${
             selectedArchives.length > 0
               ? "bg-blue-600 text-white hover:bg-blue-700"
@@ -223,6 +246,13 @@ export const ArchiveList: React.FC<ArchiveListProps> = ({
           </tbody>
         </table>
       </div>
+      {showAddArchive && (
+        <SendArchiveModal
+          isDark={isDark}
+          onClose={() => setShowSendArchive(false)}
+          onSubmit={handleSubmitArchive}
+        />
+      )}
     </div>
   );
 };

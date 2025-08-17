@@ -1,16 +1,16 @@
 import React, { useState } from "react";
 import { X, Upload } from "lucide-react";
-import { NewArchive } from "../../types";
+import { SendArchive } from "../../types";
 import { translations } from "../../translations";
 import { useLanguageStore } from "../../store/languageStore";
 
-interface AddArchiveModalProps {
+interface SendArchiveModalProps {
   isDark: boolean;
   onClose: () => void;
-  onSubmit: (archive: NewArchive) => void;
+  onSubmit: (archive: SendArchive) => void;
 }
 
-export const AddArchiveModal: React.FC<AddArchiveModalProps> = ({
+export const SendArchiveModal: React.FC<SendArchiveModalProps> = ({
   isDark,
   onClose,
   onSubmit,
@@ -18,11 +18,10 @@ export const AddArchiveModal: React.FC<AddArchiveModalProps> = ({
   const { language } = useLanguageStore();
   const t = translations[language];
 
-  const [newArchive, setNewArchive] = useState<NewArchive>({
-    title: "",
+  const [newArchive, setNewArchive] = useState<SendArchive>({
+    subject: "",
     description: "",
-    // category: "",
-    // recipient: "",
+    recipient: "",
     file: null,
   });
 
@@ -44,7 +43,7 @@ export const AddArchiveModal: React.FC<AddArchiveModalProps> = ({
         } rounded-lg shadow-xl max-w-2xl w-full p-6`}
       >
         <div className="flex justify-between items-center mb-6">
-          <h3 className="text-xl font-semibold">{t.addNewArchive}</h3>
+          <h3 className="text-xl font-semibold">{t.sendArchive}</h3>
           <button
             onClick={onClose}
             className="p-1 rounded-lg hover:bg-opacity-20 hover:bg-gray-500"
@@ -54,23 +53,51 @@ export const AddArchiveModal: React.FC<AddArchiveModalProps> = ({
         </div>
         <form onSubmit={handleSubmit}>
           <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium mb-1">
-                {t.archiveTitle}
-              </label>
-              <input
-                type="text"
-                value={newArchive.title}
-                onChange={(e) =>
-                  setNewArchive((prev) => ({ ...prev, title: e.target.value }))
-                }
-                className={`w-full p-2 rounded-lg border ${
-                  isDark
-                    ? "bg-gray-700 border-gray-600"
-                    : "bg-white border-gray-300"
-                }`}
-                required
-              />
+            <div className="flex gap-4">
+              <div className="w-full">
+                <label className="block text-sm font-medium mb-1">
+                  {t.recipientEMail}
+                </label>
+                <input
+                  type="email"
+                  value={newArchive.recipient}
+                  onChange={(e) =>
+                    setNewArchive((prev) => ({
+                      ...prev,
+                      recipient: e.target.value,
+                    }))
+                  }
+                  className={`w-full p-2 rounded-lg border ${
+                    isDark
+                      ? "bg-gray-700 border-gray-600"
+                      : "bg-white border-gray-300"
+                  }`}
+                  required
+                  placeholder="example@gmail.com"
+                />
+              </div>
+              <div className="w-full">
+                <label className="block text-sm font-medium mb-1">
+                  {t.emailSubject}
+                </label>
+                <input
+                  type="text"
+                  value={newArchive.subject}
+                  onChange={(e) =>
+                    setNewArchive((prev) => ({
+                      ...prev,
+                      subject: e.target.value,
+                    }))
+                  }
+                  className={`w-full p-2 rounded-lg border ${
+                    isDark
+                      ? "bg-gray-700 border-gray-600"
+                      : "bg-white border-gray-300"
+                  }`}
+                  required
+                  placeholder="Financial Report 2024"
+                />
+              </div>
             </div>
             <div>
               <label className="block text-sm font-medium mb-1">
@@ -90,49 +117,9 @@ export const AddArchiveModal: React.FC<AddArchiveModalProps> = ({
                     : "bg-white border-gray-300"
                 }`}
                 rows={3}
+                required
               />
             </div>
-            {/* <div>
-              <label className="block text-sm font-medium mb-1">
-                {t.category}
-              </label>
-              <input
-                type="text"
-                value={newArchive.category}
-                onChange={(e) =>
-                  setNewArchive((prev) => ({
-                    ...prev,
-                    category: e.target.value,
-                  }))
-                }
-                className={`w-full p-2 rounded-lg border ${
-                  isDark
-                    ? "bg-gray-700 border-gray-600"
-                    : "bg-white border-gray-300"
-                }`}
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">
-                {t.recipient}
-              </label>
-              <input
-                type="text"
-                value={newArchive.recipient}
-                onChange={(e) =>
-                  setNewArchive((prev) => ({
-                    ...prev,
-                    recipient: e.target.value,
-                  }))
-                }
-                className={`w-full p-2 rounded-lg border ${
-                  isDark
-                    ? "bg-gray-700 border-gray-600"
-                    : "bg-white border-gray-300"
-                }`}
-                placeholder="email@example.com, email2@example.com"
-              />
-            </div> */}
             <div>
               <label className="block text-sm font-medium mb-1">
                 {t.archiveFile}
