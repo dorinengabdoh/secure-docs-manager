@@ -21,9 +21,15 @@ const mockUsers: User[] = [
   },
   {
     id: "2",
-    email: "user@example.com",
+    email: "user1@example.com",
     name: "Regular User",
-    role: "user",
+    role: "editor",
+  },
+  {
+    id: "3",
+    email: "user2@example.com",
+    name: "Regular User",
+    role: "reader",
   },
 ];
 

@@ -23,6 +23,7 @@ export const AddUserModal: React.FC<NewUserModalProps> = ({
     email: "",
     password: "",
     role: "",
+    status: "",
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -132,6 +133,31 @@ export const AddUserModal: React.FC<NewUserModalProps> = ({
                 <option value="">{t.userRoleOpt}</option>
                 <option value={t.userRole1}>{t.userRole1}</option>
                 <option value={t.userRole2}>{t.userRole2}</option>
+                <option value={t.userRole3}>{t.userRole3}</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">
+                {t.userSatus}
+              </label>
+              <select
+                name="role"
+                onChange={(e) =>
+                  setNewUser((prev) => ({
+                    ...prev,
+                    status: e.target.value,
+                  }))
+                }
+                className={`w-full p-2 rounded-lg border ${
+                  isDark
+                    ? "bg-gray-700 border-gray-600"
+                    : "bg-white border-gray-300"
+                }`}
+                required
+              >
+                <option value="">{t.userStatusOpt}</option>
+                <option value={t.userStatus1}>{t.userStatus1}</option>
+                <option value={t.userStatus2}>{t.userStatus2}</option>
               </select>
             </div>
           </div>
