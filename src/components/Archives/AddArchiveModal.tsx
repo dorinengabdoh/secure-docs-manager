@@ -20,9 +20,9 @@ export const AddArchiveModal: React.FC<AddArchiveModalProps> = ({
 
   const [newArchive, setNewArchive] = useState<NewArchive>({
     title: "",
-    description: "",
-    // category: "",
-    // recipient: "",
+    author: "",
+    type: "",
+    keywords: "",
     file: null,
   });
 
@@ -43,6 +43,7 @@ export const AddArchiveModal: React.FC<AddArchiveModalProps> = ({
           isDark ? "bg-gray-800" : "bg-white"
         } rounded-lg shadow-xl max-w-2xl w-full p-6`}
       >
+        {/* Header */}
         <div className="flex justify-between items-center mb-6">
           <h3 className="text-xl font-semibold">{t.addNewArchive}</h3>
           <button
@@ -52,87 +53,107 @@ export const AddArchiveModal: React.FC<AddArchiveModalProps> = ({
             <X className="h-6 w-6" />
           </button>
         </div>
+
+        {/* Form */}
         <form onSubmit={handleSubmit}>
           <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium mb-1">
-                {t.archiveTitle}
-              </label>
-              <input
-                type="text"
-                value={newArchive.title}
-                onChange={(e) =>
-                  setNewArchive((prev) => ({ ...prev, title: e.target.value }))
-                }
-                className={`w-full p-2 rounded-lg border ${
-                  isDark
-                    ? "bg-gray-700 border-gray-600"
-                    : "bg-white border-gray-300"
-                }`}
-                required
-              />
+            <div className="grid grid-cols-2 gap-4">
+              {/* Titre */}
+              <div>
+                <label className="block text-sm font-medium mb-1">
+                  {t.archiveTitle}
+                </label>
+                <input
+                  type="text"
+                  value={newArchive.title}
+                  onChange={(e) =>
+                    setNewArchive((prev) => ({
+                      ...prev,
+                      title: e.target.value,
+                    }))
+                  }
+                  className={`w-full p-2 rounded-lg border ${
+                    isDark
+                      ? "bg-gray-700 border-gray-600"
+                      : "bg-white border-gray-300"
+                  }`}
+                  required
+                  placeholder={t.TitlePlaceholder}
+                />
+              </div>
+
+              {/* Auteur */}
+              <div>
+                <label className="block text-sm font-medium mb-1">
+                  {t.author}
+                </label>
+                <input
+                  type="text"
+                  value={newArchive.author}
+                  onChange={(e) =>
+                    setNewArchive((prev) => ({
+                      ...prev,
+                      author: e.target.value,
+                    }))
+                  }
+                  className={`w-full p-2 rounded-lg border ${
+                    isDark
+                      ? "bg-gray-700 border-gray-600"
+                      : "bg-white border-gray-300"
+                  }`}
+                  required
+                  placeholder={t.authorPlaceholder}
+                />
+              </div>
             </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">
-                {t.description}
-              </label>
-              <textarea
-                value={newArchive.description}
-                onChange={(e) =>
-                  setNewArchive((prev) => ({
-                    ...prev,
-                    description: e.target.value,
-                  }))
-                }
-                className={`w-full p-2 rounded-lg border ${
-                  isDark
-                    ? "bg-gray-700 border-gray-600"
-                    : "bg-white border-gray-300"
-                }`}
-                rows={3}
-              />
+
+            <div className="grid grid-cols-2 gap-4">
+              {/* Type */}
+              <div>
+                <label className="block text-sm font-medium mb-1">
+                  {t.type}
+                </label>
+                <input
+                  type="text"
+                  value={newArchive.type}
+                  onChange={(e) =>
+                    setNewArchive((prev) => ({ ...prev, type: e.target.value }))
+                  }
+                  className={`w-full p-2 rounded-lg border ${
+                    isDark
+                      ? "bg-gray-700 border-gray-600"
+                      : "bg-white border-gray-300"
+                  }`}
+                  required
+                  placeholder={t.typePlaceholder}
+                />
+              </div>
+
+              {/* Mots-clés */}
+              <div>
+                <label className="block text-sm font-medium mb-1">
+                  {t.keywords}
+                </label>
+                <input
+                  type="text"
+                  value={newArchive.keywords}
+                  onChange={(e) =>
+                    setNewArchive((prev) => ({
+                      ...prev,
+                      keywords: e.target.value,
+                    }))
+                  }
+                  className={`w-full p-2 rounded-lg border ${
+                    isDark
+                      ? "bg-gray-700 border-gray-600"
+                      : "bg-white border-gray-300"
+                  }`}
+                  placeholder="séparés par des virgules"
+                />
+              </div>
             </div>
-            {/* <div>
-              <label className="block text-sm font-medium mb-1">
-                {t.category}
-              </label>
-              <input
-                type="text"
-                value={newArchive.category}
-                onChange={(e) =>
-                  setNewArchive((prev) => ({
-                    ...prev,
-                    category: e.target.value,
-                  }))
-                }
-                className={`w-full p-2 rounded-lg border ${
-                  isDark
-                    ? "bg-gray-700 border-gray-600"
-                    : "bg-white border-gray-300"
-                }`}
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">
-                {t.recipient}
-              </label>
-              <input
-                type="text"
-                value={newArchive.recipient}
-                onChange={(e) =>
-                  setNewArchive((prev) => ({
-                    ...prev,
-                    recipient: e.target.value,
-                  }))
-                }
-                className={`w-full p-2 rounded-lg border ${
-                  isDark
-                    ? "bg-gray-700 border-gray-600"
-                    : "bg-white border-gray-300"
-                }`}
-                placeholder="email@example.com, email2@example.com"
-              />
-            </div> */}
+
+            {/* Fichier */}
             <div>
               <label className="block text-sm font-medium mb-1">
                 {t.archiveFile}
@@ -167,6 +188,8 @@ export const AddArchiveModal: React.FC<AddArchiveModalProps> = ({
               </div>
             </div>
           </div>
+
+          {/* Footer */}
           <div className="mt-6 flex justify-end space-x-3">
             <button
               type="button"

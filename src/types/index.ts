@@ -5,6 +5,8 @@ export interface Archive {
   author: string;
   date: string;
   size: string;
+  keywords: string;
+  isArchived: boolean;
   status: string;
 }
 
@@ -18,16 +20,9 @@ export interface Notification {
 
 export interface NewArchive {
   title: string;
-  description: string;
-  // category: string;
-  // recipient: string;
-  file: File | null;
-}
-
-export interface SendArchive {
-  subject: string;
-  description: string;
-  recipient: string;
+  author: string;
+  type: string;
+  keywords: string;
   file: File | null;
 }
 
@@ -48,7 +43,7 @@ export interface User {
   id: string;
   email: string;
   name: string;
-  role: "admin" | "user";
+  role: "admin" | "editor" | "reader";
 }
 
 export interface LoginCredentials {

@@ -1,16 +1,16 @@
 import React, { useState } from "react";
 import { X, Upload } from "lucide-react";
-import { SendArchive } from "../../types";
+import { NewArchive } from "../../types";
 import { translations } from "../../translations";
 import { useLanguageStore } from "../../store/languageStore";
 
-interface SendArchiveModalProps {
+interface EditArchiveModalProps {
   isDark: boolean;
   onClose: () => void;
-  onSubmit: (archive: SendArchive) => void;
+  onSubmit: (archive: NewArchive) => void;
 }
 
-export const SendArchiveModal: React.FC<SendArchiveModalProps> = ({
+export const EditArchiveModal: React.FC<EditArchiveModalProps> = ({
   isDark,
   onClose,
   onSubmit,
@@ -18,10 +18,11 @@ export const SendArchiveModal: React.FC<SendArchiveModalProps> = ({
   const { language } = useLanguageStore();
   const t = translations[language];
 
-  const [newArchive, setNewArchive] = useState<SendArchive>({
-    subject: "",
-    description: "",
-    recipient: "",
+  const [newArchive, setNewArchive] = useState<NewArchive>({
+    title: "",
+    author: "",
+    type: "",
+    keywords: "",
     file: null,
   });
 
@@ -42,8 +43,9 @@ export const SendArchiveModal: React.FC<SendArchiveModalProps> = ({
           isDark ? "bg-gray-800" : "bg-white"
         } rounded-lg shadow-xl max-w-2xl w-full p-6`}
       >
+        {/* Header */}
         <div className="flex justify-between items-center mb-6">
-          <h3 className="text-xl font-semibold">{t.sendArchive}</h3>
+          <h3 className="text-xl font-semibold">{t.addNewArchive}</h3>
           <button
             onClick={onClose}
             className="p-1 rounded-lg hover:bg-opacity-20 hover:bg-gray-500"
@@ -51,42 +53,22 @@ export const SendArchiveModal: React.FC<SendArchiveModalProps> = ({
             <X className="h-6 w-6" />
           </button>
         </div>
+
         <form onSubmit={handleSubmit}>
           <div className="space-y-4">
-            <div className="flex gap-4">
-              <div className="w-full">
+            <div className="grid grid-cols-2 gap-4">
+              {/* Titre */}
+              <div>
                 <label className="block text-sm font-medium mb-1">
-                  {t.recipientEMail}
-                </label>
-                <input
-                  type="email"
-                  value={newArchive.recipient}
-                  onChange={(e) =>
-                    setNewArchive((prev) => ({
-                      ...prev,
-                      recipient: e.target.value,
-                    }))
-                  }
-                  className={`w-full p-2 rounded-lg border ${
-                    isDark
-                      ? "bg-gray-700 border-gray-600"
-                      : "bg-white border-gray-300"
-                  }`}
-                  required
-                  placeholder="example@gmail.com"
-                />
-              </div>
-              <div className="w-full">
-                <label className="block text-sm font-medium mb-1">
-                  {t.emailSubject}
+                  {t.archiveTitle}
                 </label>
                 <input
                   type="text"
-                  value={newArchive.subject}
+                  value={newArchive.title}
                   onChange={(e) =>
                     setNewArchive((prev) => ({
                       ...prev,
-                      subject: e.target.value,
+                      title: e.target.value,
                     }))
                   }
                   className={`w-full p-2 rounded-lg border ${
@@ -95,31 +77,82 @@ export const SendArchiveModal: React.FC<SendArchiveModalProps> = ({
                       : "bg-white border-gray-300"
                   }`}
                   required
-                  placeholder="Financial Report 2024"
+                  placeholder={t.TitlePlaceholder}
+                />
+              </div>
+
+              {/* Auteur */}
+              <div>
+                <label className="block text-sm font-medium mb-1">
+                  {t.author}
+                </label>
+                <input
+                  type="text"
+                  value={newArchive.author}
+                  onChange={(e) =>
+                    setNewArchive((prev) => ({
+                      ...prev,
+                      author: e.target.value,
+                    }))
+                  }
+                  className={`w-full p-2 rounded-lg border ${
+                    isDark
+                      ? "bg-gray-700 border-gray-600"
+                      : "bg-white border-gray-300"
+                  }`}
+                  required
+                  placeholder={t.authorPlaceholder}
                 />
               </div>
             </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">
-                {t.description}
-              </label>
-              <textarea
-                value={newArchive.description}
-                onChange={(e) =>
-                  setNewArchive((prev) => ({
-                    ...prev,
-                    description: e.target.value,
-                  }))
-                }
-                className={`w-full p-2 rounded-lg border ${
-                  isDark
-                    ? "bg-gray-700 border-gray-600"
-                    : "bg-white border-gray-300"
-                }`}
-                rows={3}
-                required
-              />
+
+            <div className="grid grid-cols-2 gap-4">
+              {/* Type */}
+              <div>
+                <label className="block text-sm font-medium mb-1">
+                  {t.type}
+                </label>
+                <input
+                  type="text"
+                  value={newArchive.type}
+                  onChange={(e) =>
+                    setNewArchive((prev) => ({ ...prev, type: e.target.value }))
+                  }
+                  className={`w-full p-2 rounded-lg border ${
+                    isDark
+                      ? "bg-gray-700 border-gray-600"
+                      : "bg-white border-gray-300"
+                  }`}
+                  required
+                  placeholder={t.typePlaceholder}
+                />
+              </div>
+
+              {/* Mots-clés */}
+              <div>
+                <label className="block text-sm font-medium mb-1">
+                  {t.keywords}
+                </label>
+                <input
+                  type="text"
+                  value={newArchive.keywords}
+                  onChange={(e) =>
+                    setNewArchive((prev) => ({
+                      ...prev,
+                      keywords: e.target.value,
+                    }))
+                  }
+                  className={`w-full p-2 rounded-lg border ${
+                    isDark
+                      ? "bg-gray-700 border-gray-600"
+                      : "bg-white border-gray-300"
+                  }`}
+                  placeholder="séparés par des virgules"
+                />
+              </div>
             </div>
+
+            {/* Fichier */}
             <div>
               <label className="block text-sm font-medium mb-1">
                 {t.archiveFile}
@@ -154,6 +187,8 @@ export const SendArchiveModal: React.FC<SendArchiveModalProps> = ({
               </div>
             </div>
           </div>
+
+          {/* Footer */}
           <div className="mt-6 flex justify-end space-x-3">
             <button
               type="button"

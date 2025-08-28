@@ -133,6 +133,7 @@ export const AddUserModal: React.FC<NewUserModalProps> = ({
                 <option value="">{t.userRoleOpt}</option>
                 <option value={t.userRole1}>{t.userRole1}</option>
                 <option value={t.userRole2}>{t.userRole2}</option>
+                <option value={t.userRole3}>{t.userRole3}</option>
               </select>
             </div>
             <div>
