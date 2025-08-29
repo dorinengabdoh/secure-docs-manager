@@ -1,29 +1,83 @@
-import React from 'react';
-import { Archive, Users, Settings, LayoutDashboard } from 'lucide-react';
-import { ViewType } from '../types';
-import { translations } from '../translations';
-import { useLanguageStore } from '../store/languageStore';
+import React from "react";
+import {
+  Archive,
+  Users,
+  Settings,
+  LayoutDashboard,
+  FileCheck,
+  FileCode,
+  FolderDown,
+} from "lucide-react";
+import { ViewType } from "../types";
+import { translations } from "../translations";
+import { useLanguageStore } from "../store/languageStore";
 
 interface SidebarProps {
   currentView: ViewType;
   setCurrentView: (view: ViewType) => void;
   isDark: boolean;
-  userType: string
+  userType: string;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ currentView, setCurrentView, isDark, userType }) => {
+export const Sidebar: React.FC<SidebarProps> = ({
+  currentView,
+  setCurrentView,
+  isDark,
+  userType,
+}) => {
   const { language } = useLanguageStore();
   const t = translations[language];
 
   const navigationItems = [
-    { id: 'dashboard' as ViewType, label: t.dashboard, icon: LayoutDashboard },
-    { id: 'archives' as ViewType, label: t.archives, icon: Archive },
-    ...(userType === 'admin' ? [{ id: 'users' as ViewType, label: t.users, icon: Users }] : []),
-    { id: 'settings' as ViewType, label: t.settings, icon: Settings },
+    { id: "dashboard" as ViewType, label: t.dashboard, icon: LayoutDashboard },
+
+    ...(userType === "admin" || userType === "editor"
+      ? [
+          {
+            id: "import-document" as ViewType,
+            label: t.importDocument,
+            icon: FolderDown,
+          },
+        ]
+      : []),
+
+    ...(userType === "admin" || userType === "approver"
+      ? [
+          {
+            id: "document-index" as ViewType,
+            label: t.documentIndex,
+            icon: FileCode,
+          },
+        ]
+      : []),
+
+    ...(userType === "admin" ||
+    userType === "archiviste" ||
+    userType === "approver"
+      ? [
+          {
+            id: "approve-document" as ViewType,
+            label: t.approveDocument,
+            icon: FileCheck,
+          },
+        ]
+      : []),
+
+    {
+      id: "archives" as ViewType,
+      label: t.archives,
+      icon: Archive,
+    },
+
+    ...(userType === "admin"
+      ? [{ id: "users" as ViewType, label: t.users, icon: Users }]
+      : []),
+
+    { id: "settings" as ViewType, label: t.settings, icon: Settings },
   ];
 
   return (
-    <div className={`w-64 ${isDark ? 'bg-gray-800' : 'bg-white'} shadow-lg`}>
+    <div className={`w-64 ${isDark ? "bg-gray-800" : "bg-white"} shadow-lg`}>
       <div className="p-6">
         <h1 className="text-xl font-bold">{t.title}</h1>
       </div>
@@ -32,10 +86,15 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, setCurrentView, i
           <button
             key={id}
             onClick={() => setCurrentView(id)}
-            className={`w-full flex items-center px-6 py-3 ${currentView === id
-              ? isDark ? 'bg-gray-700' : 'bg-gray-200'
-              : isDark ? 'hover:bg-gray-700' : 'hover:bg-gray-100'
-              }`}
+            className={`w-full flex items-center px-6 py-3 ${
+              currentView === id
+                ? isDark
+                  ? "bg-gray-700"
+                  : "bg-gray-200"
+                : isDark
+                ? "hover:bg-gray-700"
+                : "hover:bg-gray-100"
+            }`}
           >
             <Icon className="h-5 w-5 mr-3" />
             {label}

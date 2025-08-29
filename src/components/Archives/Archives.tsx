@@ -97,9 +97,7 @@ export const Archives: React.FC<ArchivesProps> = ({
         selectedArchives={selectedArchives}
         onArchiveSelection={handleArchiveSelection}
         onView={handleView}
-        onDownload={handleDownload}
         onDelete={handleDelete}
-        onExport={handleExport}
       />
 
       {selectedArchive && (

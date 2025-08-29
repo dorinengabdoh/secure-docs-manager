@@ -34,7 +34,7 @@ const mockUsers = [
     id: 3,
     name: "Bob Johnson",
     email: "bob@example.com",
-    role: "Reader",
+    role: "Approver",
     status: "Inactive",
   },
 ];

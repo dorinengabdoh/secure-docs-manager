@@ -34,7 +34,14 @@ export interface NewUser {
   status: string;
 }
 
-export type ViewType = "dashboard" | "archives" | "users" | "settings";
+export type ViewType =
+  | "dashboard"
+  | "archives"
+  | "import-document"
+  | "document-index"
+  | "approve-document"
+  | "users"
+  | "settings";
 export type FilterType = "all" | "pdf" | "doc";
 export type SortBy = "date" | "type" | "author";
 export type SortOrder = "ascending" | "descending";
@@ -43,7 +50,7 @@ export interface User {
   id: string;
   email: string;
   name: string;
-  role: "admin" | "editor" | "reader";
+  role: "admin" | "editor" | "archiviste" | "approver";
 }
 
 export interface LoginCredentials {
