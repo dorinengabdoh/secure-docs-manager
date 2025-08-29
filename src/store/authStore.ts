@@ -6,12 +6,11 @@ interface AuthStore {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (credentials: LoginCredentials) => Promise<boolean>;
-  logout: () => void;
+  login: (credentials?: LoginCredentials) => Promise<boolean>;
+  logout: () => Promise<void>;
   setLoading: (loading: boolean) => void;
 }
 
-// Mock users for demonstration
 const mockUsers: User[] = [
   {
     id: "1",
@@ -39,24 +38,24 @@ const mockUsers: User[] = [
   },
 ];
 
+const DEFAULT_PASSWORD = "password123";
+
 export const useAuthStore = create<AuthStore>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       user: null,
       isAuthenticated: false,
       isLoading: false,
 
-      login: async (credentials: LoginCredentials) => {
+      login: async (credentials?: LoginCredentials) => {
         set({ isLoading: true });
 
-        // Simulate API call delay
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        const email = credentials?.email || mockUsers[0].email;
+        const password = credentials?.password || DEFAULT_PASSWORD;
 
-        // Mock authentication - in real app, this would be an API call
+        await new Promise((resolve) => setTimeout(resolve, 1000));
         const user = mockUsers.find(
-          (u) =>
-            u.email === credentials.email &&
-            credentials.password === "password123"
+          (u) => u.email === email && password === DEFAULT_PASSWORD
         );
 
         if (user) {
@@ -66,13 +65,51 @@ export const useAuthStore = create<AuthStore>()(
             isLoading: false,
           });
           return true;
-        } else {
+        }
+
+        /*
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+
+        if (error || !data.user) {
           set({ isLoading: false });
           return false;
         }
+
+        const { data: profileData, error: profileError } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', data.user.id)
+          .single();
+
+        if (profileError || !profileData) {
+          set({ isLoading: false });
+          return false;
+        }
+
+        const user: User = {
+          id: data.user.id,
+          email: data.user.email!,
+          name: profileData.name,
+          role: profileData.role,
+        };
+
+        set({
+          user,
+          isAuthenticated: true,
+          isLoading: false,
+        });
+
+        return true;
+        */
+
+        set({ isLoading: false });
+        return false;
       },
 
-      logout: () => {
+      logout: async () => {
         set({
           user: null,
           isAuthenticated: false,

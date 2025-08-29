@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { NewArchive, ViewType } from "./types";
 import { useTheme } from "./hooks/useTheme";
 import { useAuthStore } from "./store/authStore";
