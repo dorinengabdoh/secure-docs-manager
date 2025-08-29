@@ -1,16 +1,32 @@
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-import { User, LoginCredentials } from '../types';
-import { supabase } from '../lib/supabase';
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
+import { User, LoginCredentials } from "../types";
 
 interface AuthStore {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (credentials: LoginCredentials) => Promise<boolean>;
+  login: (credentials?: LoginCredentials) => Promise<boolean>;
   logout: () => Promise<void>;
   setLoading: (loading: boolean) => void;
 }
+
+const mockUsers: User[] = [
+  {
+    id: "1",
+    email: "admin@example.com",
+    name: "Admin User",
+    role: "admin",
+  },
+  {
+    id: "2",
+    email: "user@example.com",
+    name: "Regular User",
+    role: "user",
+  },
+];
+
+const DEFAULT_PASSWORD = "password123";
 
 export const useAuthStore = create<AuthStore>()(
   persist(
@@ -19,13 +35,30 @@ export const useAuthStore = create<AuthStore>()(
       isAuthenticated: false,
       isLoading: false,
 
-      login: async (credentials: LoginCredentials) => {
+      login: async (credentials?: LoginCredentials) => {
         set({ isLoading: true });
 
-        // Authentification via Supabase
+        const email = credentials?.email || mockUsers[0].email;
+        const password = credentials?.password || DEFAULT_PASSWORD;
+
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        const user = mockUsers.find(
+          (u) => u.email === email && password === DEFAULT_PASSWORD
+        );
+
+        if (user) {
+          set({
+            user,
+            isAuthenticated: true,
+            isLoading: false,
+          });
+          return true;
+        }
+
+        /*
         const { data, error } = await supabase.auth.signInWithPassword({
-          email: credentials.email,
-          password: credentials.password,
+          email,
+          password,
         });
 
         if (error || !data.user) {
@@ -33,7 +66,6 @@ export const useAuthStore = create<AuthStore>()(
           return false;
         }
 
-        // Récupérer les infos du profil depuis la table "profiles"
         const { data: profileData, error: profileError } = await supabase
           .from('profiles')
           .select('*')
@@ -59,10 +91,13 @@ export const useAuthStore = create<AuthStore>()(
         });
 
         return true;
+        */
+
+        set({ isLoading: false });
+        return false;
       },
 
       logout: async () => {
-        await supabase.auth.signOut();
         set({
           user: null,
           isAuthenticated: false,
@@ -75,7 +110,7 @@ export const useAuthStore = create<AuthStore>()(
       },
     }),
     {
-      name: 'auth-storage',
+      name: "auth-storage",
       partialize: (state) => ({
         user: state.user,
         isAuthenticated: state.isAuthenticated,
