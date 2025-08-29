@@ -1,13 +1,5 @@
 import React, { useState } from "react";
-import {
-  Eye,
-  Edit,
-  Trash2,
-  Filter,
-  ArrowUpDown,
-  Search,
-  FileArchive,
-} from "lucide-react";
+import { Eye, Filter, ArrowUpDown, Search, Edit, Trash2 } from "lucide-react";
 import {
   Archive,
   FilterType,
@@ -18,9 +10,9 @@ import {
 import { translations } from "../../translations";
 import { useLanguageStore } from "../../store/languageStore";
 import { useAuthStore } from "../../store/authStore";
-import { EditArchiveModal } from "./EditArchiveModal";
+import { EditArchiveModal } from "../Archives/EditArchiveModal";
 
-interface ArchiveListProps {
+interface ImportTableProps {
   archives: Archive[];
   isDark: boolean;
   selectedArchives: Archive[];
@@ -30,24 +22,18 @@ interface ArchiveListProps {
   onDelete: (archive: Archive) => void;
 }
 
-export const ArchiveList: React.FC<ArchiveListProps> = ({
+export const ImportTable: React.FC<ImportTableProps> = ({
   archives,
   isDark,
-  selectedArchives,
-  onArchiveSelection,
   onView,
-  onEdit,
-  onDelete,
 }) => {
-  const { user } = useAuthStore();
   const { language } = useLanguageStore();
   const t = translations[language];
-
   const [filterType, setFilterType] = useState<FilterType>("all");
   const [sortBy, setSortBy] = useState<SortBy>("date");
   const [sortOrder, setSortOrder] = useState<SortOrder>("descending");
-  const [showEditArchive, setShowEditArchive] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [showEditArchive, setShowEditArchive] = useState(false);
 
   // Filtering + searching
   const filteredArchives = archives
@@ -69,22 +55,6 @@ export const ArchiveList: React.FC<ArchiveListProps> = ({
       }
       return order * a[sortBy].localeCompare(b[sortBy]);
     });
-
-  const handleSelectAll = (checked: boolean) => {
-    if (checked) {
-      filteredArchives.forEach((archive) => {
-        if (!selectedArchives.find((a) => a.id === archive.id)) {
-          onArchiveSelection(archive);
-        }
-      });
-    } else {
-      filteredArchives.forEach((archive) => {
-        if (selectedArchives.find((a) => a.id === archive.id)) {
-          onArchiveSelection(archive);
-        }
-      });
-    }
-  };
 
   const handleSubmitArchive = (newArchive: NewArchive) => {
     const archiveData = {
@@ -178,7 +148,10 @@ export const ArchiveList: React.FC<ArchiveListProps> = ({
           </thead>
           <tbody>
             {filteredArchives
-              .filter((archive) => archive.status === "archived")
+              .filter(
+                (archive) =>
+                  archive.status === "pending" || archive.status === "reject"
+              )
               .map((archive) => (
                 <tr
                   key={archive.id}
@@ -206,11 +179,8 @@ export const ArchiveList: React.FC<ArchiveListProps> = ({
                       >
                         <Eye className="h-5 w-5" />
                       </button>
-
                       {/* Edit button */}
-                      {(user?.role === "admin" ||
-                        (user?.role === "archiviste" &&
-                          !archive.isArchived)) && (
+                      {archive.status === "reject" && (
                         <button
                           onClick={() => setShowEditArchive(true)}
                           className="p-2 rounded-lg text-green-500 hover:bg-green-500 hover:bg-opacity-20"
@@ -219,9 +189,8 @@ export const ArchiveList: React.FC<ArchiveListProps> = ({
                           <Edit className="h-5 w-5" />
                         </button>
                       )}
-
                       {/* Delete button */}
-                      {user?.role === "admin" && (
+                      {archive.status === "reject" && (
                         <button
                           onClick={() => onDelete(archive)}
                           className="p-2 rounded-lg text-red-500 hover:bg-red-500 hover:bg-opacity-20"
@@ -237,7 +206,6 @@ export const ArchiveList: React.FC<ArchiveListProps> = ({
           </tbody>
         </table>
       </div>
-
       {showEditArchive && (
         <EditArchiveModal
           isDark={isDark}

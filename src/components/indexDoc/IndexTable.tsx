@@ -1,26 +1,17 @@
 import React, { useState } from "react";
 import {
   Eye,
-  Edit,
-  Trash2,
   Filter,
   ArrowUpDown,
   Search,
-  FileArchive,
+  ShieldCheck,
+  ShieldX,
 } from "lucide-react";
-import {
-  Archive,
-  FilterType,
-  NewArchive,
-  SortBy,
-  SortOrder,
-} from "../../types";
+import { Archive, FilterType, SortBy, SortOrder } from "../../types";
 import { translations } from "../../translations";
 import { useLanguageStore } from "../../store/languageStore";
-import { useAuthStore } from "../../store/authStore";
-import { EditArchiveModal } from "./EditArchiveModal";
 
-interface ArchiveListProps {
+interface IndexTableProps {
   archives: Archive[];
   isDark: boolean;
   selectedArchives: Archive[];
@@ -30,23 +21,17 @@ interface ArchiveListProps {
   onDelete: (archive: Archive) => void;
 }
 
-export const ArchiveList: React.FC<ArchiveListProps> = ({
+export const IndexTable: React.FC<IndexTableProps> = ({
   archives,
   isDark,
-  selectedArchives,
-  onArchiveSelection,
   onView,
-  onEdit,
-  onDelete,
 }) => {
-  const { user } = useAuthStore();
   const { language } = useLanguageStore();
   const t = translations[language];
 
   const [filterType, setFilterType] = useState<FilterType>("all");
   const [sortBy, setSortBy] = useState<SortBy>("date");
   const [sortOrder, setSortOrder] = useState<SortOrder>("descending");
-  const [showEditArchive, setShowEditArchive] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
 
   // Filtering + searching
@@ -69,36 +54,6 @@ export const ArchiveList: React.FC<ArchiveListProps> = ({
       }
       return order * a[sortBy].localeCompare(b[sortBy]);
     });
-
-  const handleSelectAll = (checked: boolean) => {
-    if (checked) {
-      filteredArchives.forEach((archive) => {
-        if (!selectedArchives.find((a) => a.id === archive.id)) {
-          onArchiveSelection(archive);
-        }
-      });
-    } else {
-      filteredArchives.forEach((archive) => {
-        if (selectedArchives.find((a) => a.id === archive.id)) {
-          onArchiveSelection(archive);
-        }
-      });
-    }
-  };
-
-  const handleSubmitArchive = (newArchive: NewArchive) => {
-    const archiveData = {
-      ...newArchive,
-      id: Date.now(),
-      date: new Date().toISOString(),
-      type: newArchive.file?.type || "Unknown",
-      size: newArchive.file?.size
-        ? `${(newArchive.file.size / 1024 / 1024).toFixed(2)} MB`
-        : "Unknown",
-      author: "Current User",
-    };
-    console.log("Submitting new archive:", archiveData);
-  };
 
   return (
     <div
@@ -178,7 +133,10 @@ export const ArchiveList: React.FC<ArchiveListProps> = ({
           </thead>
           <tbody>
             {filteredArchives
-              .filter((archive) => archive.status === "archived")
+              .filter(
+                (archive) =>
+                  archive.status === "pending" || archive.status === "reject"
+              )
               .map((archive) => (
                 <tr
                   key={archive.id}
@@ -207,29 +165,21 @@ export const ArchiveList: React.FC<ArchiveListProps> = ({
                         <Eye className="h-5 w-5" />
                       </button>
 
-                      {/* Edit button */}
-                      {(user?.role === "admin" ||
-                        (user?.role === "archiviste" &&
-                          !archive.isArchived)) && (
-                        <button
-                          onClick={() => setShowEditArchive(true)}
-                          className="p-2 rounded-lg text-green-500 hover:bg-green-500 hover:bg-opacity-20"
-                          title={t.edit}
-                        >
-                          <Edit className="h-5 w-5" />
-                        </button>
-                      )}
+                      {/* Approve button */}
+                      <button
+                        className="p-2 rounded-lg text-green-500 hover:bg-green-500 hover:bg-opacity-20"
+                        title={t.approve}
+                      >
+                        <ShieldCheck className="h-5 w-5" />
+                      </button>
 
-                      {/* Delete button */}
-                      {user?.role === "admin" && (
-                        <button
-                          onClick={() => onDelete(archive)}
-                          className="p-2 rounded-lg text-red-500 hover:bg-red-500 hover:bg-opacity-20"
-                          title={t.delete}
-                        >
-                          <Trash2 className="h-5 w-5" />
-                        </button>
-                      )}
+                      {/* UnApprove button */}
+                      <button
+                        className="p-2 rounded-lg text-red-500 hover:bg-red-500 hover:bg-opacity-20"
+                        title={t.delete}
+                      >
+                        <ShieldX className="h-5 w-5" />
+                      </button>
                     </div>
                   </td>
                 </tr>
@@ -237,14 +187,6 @@ export const ArchiveList: React.FC<ArchiveListProps> = ({
           </tbody>
         </table>
       </div>
-
-      {showEditArchive && (
-        <EditArchiveModal
-          isDark={isDark}
-          onClose={() => setShowEditArchive(false)}
-          onSubmit={handleSubmitArchive}
-        />
-      )}
     </div>
   );
 };

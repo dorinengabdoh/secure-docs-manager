@@ -10,6 +10,9 @@ import { Archives } from "./components/Archives/Archives";
 import { Users } from "./components/Users/Users";
 import { Settings } from "./components/Settings";
 import { AddArchiveModal } from "./components/Archives/AddArchiveModal";
+import { ApproveDoc } from "./components/approveDoc/ApproveDoc";
+import { IndexDoc } from "./components/indexDoc/IndexDoc";
+import { ImportDoc } from "./components/ImportDoc/importDOc";
 
 function App() {
   const { isDark, toggleTheme } = useTheme();
@@ -43,6 +46,12 @@ function App() {
         return <Dashboard isDark={isDark} />;
       case "archives":
         return <Archives isDark={isDark} />;
+      case "import-document":
+        return <ImportDoc isDark={isDark} />;
+      case "document-index":
+        return <IndexDoc isDark={isDark} />;
+      case "approve-document":
+        return <ApproveDoc isDark={isDark} />;
       case "users":
         return <Users isDark={isDark} />;
       case "settings":

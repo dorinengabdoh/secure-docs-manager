@@ -76,7 +76,8 @@ export const LoginPage: React.FC = () => {
               {[
                 { email: "admin@example.com", label: t.adminAccount },
                 { email: "user1@example.com", label: t.EditorAccount },
-                { email: "user2@example.com", label: t.ReaderAccount },
+                { email: "user2@example.com", label: t.ApproverAccount },
+                { email: "user3@example.com", label: t.ArchiverAccount },
               ].map((acc) => (
                 <button
                   key={acc.email}

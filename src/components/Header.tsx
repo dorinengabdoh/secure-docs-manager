@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Search, Bell, Sun, Moon, LogOut, User, FileDown } from "lucide-react";
+import { Bell, Sun, Moon, LogOut, User, FileDown } from "lucide-react";
 import { translations } from "../translations";
 import { useLanguageStore } from "../store/languageStore";
 import { useAuthStore } from "../store/authStore";
@@ -29,15 +29,23 @@ export const Header: React.FC<HeaderProps> = ({
     setShowUserMenu(false);
   };
   return (
-    <div className="flex items-center justify-between mb-8">
+    <div
+      className={`${
+        user?.role === "admin" || user?.role === "editor"
+          ? "flex items-center justify-between mb-8"
+          : "flex items-center justify-end mb-8"
+      } `}
+    >
       {/* Add New Archive Button */}
-      <button
-        onClick={onAddArchive}
-        className="flex items-center bg-blue-600 text-white px-5 py-2.5 rounded-xl shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all"
-      >
-        <FileDown className="h-5 w-5 mr-2" />
-        <span className="font-medium">{t.addNewArchive}</span>
-      </button>
+      {(user?.role === "admin" || user?.role === "editor") && (
+        <button
+          onClick={onAddArchive}
+          className="flex items-center bg-blue-600 text-white px-5 py-2.5 rounded-xl shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all"
+        >
+          <FileDown className="h-5 w-5 mr-2" />
+          <span className="font-medium">{t.addNewArchive}</span>
+        </button>
+      )}
 
       {/* User, Theme, Language & Notifications */}
       <div className="flex items-center gap-3 relative">
