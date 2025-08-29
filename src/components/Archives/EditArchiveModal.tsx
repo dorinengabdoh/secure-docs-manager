@@ -4,13 +4,13 @@ import { NewArchive } from "../../types";
 import { translations } from "../../translations";
 import { useLanguageStore } from "../../store/languageStore";
 
-interface AddArchiveModalProps {
+interface EditArchiveModalProps {
   isDark: boolean;
   onClose: () => void;
   onSubmit: (archive: NewArchive) => void;
 }
 
-export const AddArchiveModal: React.FC<AddArchiveModalProps> = ({
+export const EditArchiveModal: React.FC<EditArchiveModalProps> = ({
   isDark,
   onClose,
   onSubmit,
@@ -54,7 +54,6 @@ export const AddArchiveModal: React.FC<AddArchiveModalProps> = ({
           </button>
         </div>
 
-        {/* Form */}
         <form onSubmit={handleSubmit}>
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">

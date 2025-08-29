@@ -15,7 +15,7 @@ function App() {
   const { isDark, toggleTheme } = useTheme();
   const { isAuthenticated, user } = useAuthStore();
   const [currentView, setCurrentView] = useState<ViewType>("dashboard");
-  const [showAddArchive, setShowAddArchive] = useState(false);
+  const [showEditArchive, setshowEditArchive] = useState(false);
 
   // Show login page if not authenticated
   if (!isAuthenticated) {
@@ -69,15 +69,15 @@ function App() {
           <Header
             isDark={isDark}
             toggleTheme={toggleTheme}
-            onAddArchive={() => setShowAddArchive(true)}
+            onAddArchive={() => setshowEditArchive(true)}
           />
           {renderCurrentView()}
         </div>
       </div>
-      {showAddArchive && (
+      {showEditArchive && (
         <AddArchiveModal
           isDark={isDark}
-          onClose={() => setShowAddArchive(false)}
+          onClose={() => setshowEditArchive(false)}
           onSubmit={handleSubmitArchive}
         />
       )}

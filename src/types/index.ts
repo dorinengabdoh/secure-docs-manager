@@ -5,6 +5,8 @@ export interface Archive {
   author: string;
   date: string;
   size: string;
+  keywords: string;
+  isArchived: boolean;
   status: string;
 }
 
@@ -18,9 +20,9 @@ export interface Notification {
 
 export interface NewArchive {
   title: string;
-  description: string;
-  category: string;
-  recipients: string;
+  author: string;
+  type: string;
+  keywords: string;
   file: File | null;
 }
 
@@ -29,6 +31,7 @@ export interface NewUser {
   email: string;
   password: string;
   role: string;
+  status: string;
 }
 
 export type ViewType = "dashboard" | "archives" | "users" | "settings";
@@ -40,7 +43,7 @@ export interface User {
   id: string;
   email: string;
   name: string;
-  role: "admin" | "user";
+  role: "admin" | "editor" | "reader";
 }
 
 export interface LoginCredentials {
