@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import { NewArchive, ViewType } from "./types";
 import { useTheme } from "./hooks/useTheme";
 import { useAuthStore } from "./store/authStore";
@@ -13,31 +13,67 @@ import { AddArchiveModal } from "./components/Archives/AddArchiveModal";
 import { ApproveDoc } from "./components/approveDoc/ApproveDoc";
 import { IndexDoc } from "./components/indexDoc/IndexDoc";
 import { ImportDoc } from "./components/ImportDoc/importDOc";
+import api from "./utilities/api";
+import { useArchiveStore } from "./store/useArchiveStore";
+import { useUserStore } from "./store/userStore";
 
 function App() {
   const { isDark, toggleTheme } = useTheme();
   const { isAuthenticated, user } = useAuthStore();
   const [currentView, setCurrentView] = useState<ViewType>("dashboard");
   const [showEditArchive, setshowEditArchive] = useState(false);
+  const fetchArchives = useArchiveStore((state) => state.fetchArchives);
+  const fetchUsers = useUserStore((s) => s.fetchUsers);
+
+  useEffect(() => {
+    fetchArchives();
+    fetchUsers();
+  }, [fetchArchives, fetchUsers]);
 
   // Show login page if not authenticated
   if (!isAuthenticated) {
     return <LoginPage />;
   }
 
-  const handleSubmitArchive = (newArchive: NewArchive) => {
-    const archiveData = {
-      ...newArchive,
-      id: Date.now(),
-      date: new Date().toISOString(),
-      type: newArchive.file?.type || "Unknown",
-      size: newArchive.file?.size
-        ? `${(newArchive.file.size / 1024 / 1024).toFixed(2)} MB`
-        : "Unknown",
-      author: "Current User",
-    };
+  const handleSubmitArchive = async (newArchive: NewArchive) => {
+    try {
+      const formData = new FormData();
 
-    console.log("Submitting new archive:", archiveData);
+      if (newArchive.file) {
+        formData.append("file", newArchive.file);
+      }
+
+      formData.append("title", newArchive.title);
+
+      // Use the type input from the modal (fallback to file type if empty)
+      formData.append(
+        "type",
+        newArchive.type || newArchive.file?.type || "Unknown"
+      );
+
+      formData.append(
+        "author",
+        newArchive.author || "Current User" // fallback if missing
+      );
+      formData.append("date", new Date().toISOString());
+      formData.append("status", newArchive.status || "draft");
+      formData.append("keywords", newArchive.keywords || "");
+
+      const { data } = await api.post("/files", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      console.log("Archive uploaded successfully:", data);
+      return data;
+    } catch (error: any) {
+      console.error(
+        "Error uploading archive:",
+        error.response?.data || error.message
+      );
+      throw error;
+    }
   };
 
   const renderCurrentView = () => {

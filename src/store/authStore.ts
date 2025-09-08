@@ -1,44 +1,16 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { User, LoginCredentials } from "../types";
+import api from "../utilities/api";
 
 interface AuthStore {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (credentials?: LoginCredentials) => Promise<boolean>;
+  login: (credentials: LoginCredentials) => Promise<boolean>;
   logout: () => Promise<void>;
   setLoading: (loading: boolean) => void;
 }
-
-const mockUsers: User[] = [
-  {
-    id: "1",
-    email: "admin@example.com",
-    name: "Admin User",
-    role: "admin",
-  },
-  {
-    id: "2",
-    email: "user1@example.com",
-    name: "Regular User",
-    role: "editor",
-  },
-  {
-    id: "3",
-    email: "user2@example.com",
-    name: "Regular User",
-    role: "approver",
-  },
-  {
-    id: "4",
-    email: "user3@example.com",
-    name: "Regular User",
-    role: "archiviste",
-  },
-];
-
-const DEFAULT_PASSWORD = "password123";
 
 export const useAuthStore = create<AuthStore>()(
   persist(
@@ -47,66 +19,34 @@ export const useAuthStore = create<AuthStore>()(
       isAuthenticated: false,
       isLoading: false,
 
-      login: async (credentials?: LoginCredentials) => {
+      login: async (credentials: LoginCredentials) => {
         set({ isLoading: true });
 
-        const email = credentials?.email || mockUsers[0].email;
-        const password = credentials?.password || DEFAULT_PASSWORD;
+        try {
+          const { data } = await api.post("/auth/login", credentials);
 
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        const user = mockUsers.find(
-          (u) => u.email === email && password === DEFAULT_PASSWORD
-        );
+          // If backend returns user info and token
+          if (data?.user) {
+            set({
+              user: data.user,
+              isAuthenticated: true,
+              isLoading: false,
+            });
 
-        if (user) {
-          set({
-            user,
-            isAuthenticated: true,
-            isLoading: false,
-          });
-          return true;
-        }
+            if (data.token) {
+              localStorage.setItem("token", data.token);
+            }
 
-        /*
-        const { data, error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
+            return true;
+          }
 
-        if (error || !data.user) {
+          set({ isLoading: false });
+          return false;
+        } catch (error: any) {
+          console.error("Login error:", error?.response?.data || error.message);
           set({ isLoading: false });
           return false;
         }
-
-        const { data: profileData, error: profileError } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', data.user.id)
-          .single();
-
-        if (profileError || !profileData) {
-          set({ isLoading: false });
-          return false;
-        }
-
-        const user: User = {
-          id: data.user.id,
-          email: data.user.email!,
-          name: profileData.name,
-          role: profileData.role,
-        };
-
-        set({
-          user,
-          isAuthenticated: true,
-          isLoading: false,
-        });
-
-        return true;
-        */
-
-        set({ isLoading: false });
-        return false;
       },
 
       logout: async () => {
@@ -115,11 +55,10 @@ export const useAuthStore = create<AuthStore>()(
           isAuthenticated: false,
           isLoading: false,
         });
+        localStorage.removeItem("token");
       },
 
-      setLoading: (loading: boolean) => {
-        set({ isLoading: loading });
-      },
+      setLoading: (loading: boolean) => set({ isLoading: loading }),
     }),
     {
       name: "auth-storage",

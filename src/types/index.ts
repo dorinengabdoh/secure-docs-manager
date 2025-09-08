@@ -8,6 +8,8 @@ export interface Archive {
   keywords: string;
   isArchived: boolean;
   status: string;
+  extension: string;
+  fileName: string;
 }
 
 export interface Notification {
@@ -23,10 +25,12 @@ export interface NewArchive {
   author: string;
   type: string;
   keywords: string;
+  status: string;
   file: File | null;
 }
 
 export interface NewUser {
+  id: number;
   name: string;
   email: string;
   password: string;
@@ -42,8 +46,8 @@ export type ViewType =
   | "approve-document"
   | "users"
   | "settings";
-export type FilterType = "all" | "pdf" | "doc";
-export type SortBy = "date" | "type" | "author";
+export type FilterType = "author" | "type" | "date" | "all";
+export type SortBy = "author" | "type" | "date" | "title" | "status";
 export type SortOrder = "ascending" | "descending";
 
 export interface User {
