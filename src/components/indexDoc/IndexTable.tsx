@@ -113,7 +113,7 @@ export const IndexTable: React.FC<IndexTableProps> = ({ isDark, onView }) => {
       {/* Brief alert */}
       {alert && (
         <div
-          className={`fixed top-18 right-10 px-4 py-2 rounded shadow-lg text-white z-50 ${
+          className={`fixed top-6 left-1/2 transform -translate-x-1/2 px-6 py-3 rounded-lg shadow-lg text-white z-50 transition-opacity ${
             alert.status === "approved"
               ? "bg-green-500"
               : alert.status === "rejected"

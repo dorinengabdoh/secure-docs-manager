@@ -62,7 +62,10 @@ export const EditArchiveModal: React.FC<EditArchiveModalProps> = ({
     setMessage(null);
 
     try {
-      const success = await onSubmit(newArchive);
+      // 👇 force status to "pending" before submit
+      const archiveToSave = { ...newArchive, status: "draft" };
+
+      const success = await onSubmit(archiveToSave);
 
       if (success) {
         setMessage({ type: "success", text: t.archiveUpdatedSuccessfully });
@@ -185,36 +188,6 @@ export const EditArchiveModal: React.FC<EditArchiveModalProps> = ({
               />
             </div>
           </div>
-
-          {/* Status */}
-          {user?.role === "admin" && (
-            <div>
-              <label className="block text-sm font-medium mb-1">
-                {t.userSatus}
-              </label>
-              <select
-                name="status"
-                value={newArchive.status}
-                onChange={(e) =>
-                  setNewArchive((prev) => ({
-                    ...prev,
-                    status: e.target.value,
-                  }))
-                }
-                className={`w-full p-2 rounded-lg border ${
-                  isDark
-                    ? "bg-gray-700 border-gray-600"
-                    : "bg-white border-gray-300"
-                }`}
-                required
-              >
-                <option value="">{t.userStatusOpt}</option>
-                <option value={t.archiveStatus1}>{t.archiveStatus1}</option>
-                <option value={t.archiveStatus2}>{t.archiveStatus2}</option>
-                <option value={t.archiveStatus3}>{t.archiveStatus3}</option>
-              </select>
-            </div>
-          )}
 
           {/* File Upload */}
           <div>
