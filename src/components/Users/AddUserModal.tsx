@@ -3,12 +3,11 @@ import { X } from "lucide-react";
 import { NewUser } from "../../types";
 import { translations } from "../../translations";
 import { useLanguageStore } from "../../store/languageStore";
-import api from "../../utilities/api"; // Axios instance
 
 interface NewUserModalProps {
   isDark: boolean;
   onClose: () => void;
-  onSubmit?: (user: NewUser) => void;
+  onSubmit: (user: NewUser) => void; // always required now
   user?: NewUser | null;
 }
 
@@ -37,7 +36,7 @@ export const AddUserModal: React.FC<NewUserModalProps> = ({
         id: user.id,
         name: user.name,
         email: user.email,
-        password: "", // 🔑 keep empty on edit
+        password: "",
         role: user.role,
         status: user.status,
       });
@@ -53,46 +52,10 @@ export const AddUserModal: React.FC<NewUserModalProps> = ({
     }
   }, [user]);
 
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    setError("");
-
-    try {
-      let response;
-      if (user) {
-        // Editing existing user
-        response = await api.put(`/users/${user.id}`, {
-          name: newUser.name,
-          email: newUser.email,
-          role: newUser.role,
-          status: newUser.status,
-          ...(newUser.password ? { password: newUser.password } : {}),
-        });
-      } else {
-        // Adding new user
-        response = await api.post("/users/add", {
-          name: newUser.name,
-          email: newUser.email,
-          password: newUser.password,
-          role: newUser.role,
-          status: newUser.status,
-        });
-      }
-
-      if (onSubmit) onSubmit(response.data);
-      onClose();
-    } catch (err: any) {
-      console.error("Error saving user:", err);
-      setError(
-        err.response?.data?.error || "Failed to save user. Please try again."
-      );
-    } finally {
-      setLoading(false);
-    }
+    onSubmit(newUser); // delegate API call to Users.tsx
+    onClose();
   };
 
   return (
@@ -113,10 +76,6 @@ export const AddUserModal: React.FC<NewUserModalProps> = ({
             <X className="h-6 w-6" />
           </button>
         </div>
-
-        {error && (
-          <div className="mb-4 text-red-500 text-sm font-medium">{error}</div>
-        )}
 
         <form onSubmit={handleSubmit}>
           <div className="space-y-4">
@@ -178,7 +137,7 @@ export const AddUserModal: React.FC<NewUserModalProps> = ({
                     ? "bg-gray-700 border-gray-600"
                     : "bg-white border-gray-300"
                 }`}
-                required={!user} // required only when adding
+                required={!user}
               />
             </div>
 
@@ -201,9 +160,6 @@ export const AddUserModal: React.FC<NewUserModalProps> = ({
                 required
               >
                 <option value="">{t.userRoleOpt}</option>
-                <option value={t.userRole1.toLocaleLowerCase()}>
-                  {t.userRole1}
-                </option>
                 <option value={t.userRole2.toLocaleLowerCase()}>
                   {t.userRole2}
                 </option>
@@ -235,12 +191,8 @@ export const AddUserModal: React.FC<NewUserModalProps> = ({
                 required
               >
                 <option value="">{t.userStatusOpt}</option>
-                <option value={t.userStatus1.toLocaleLowerCase()}>
-                  {t.userStatus1}
-                </option>
-                <option value={t.userStatus2.toLocaleLowerCase()}>
-                  {t.userStatus2}
-                </option>
+                <option value={t.userStatus1}>{t.userStatus1}</option>
+                <option value={t.userStatus2}>{t.userStatus2}</option>
               </select>
             </div>
           </div>
@@ -259,16 +211,9 @@ export const AddUserModal: React.FC<NewUserModalProps> = ({
             </button>
             <button
               type="submit"
-              disabled={loading}
-              className={`px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 ${
-                loading ? "opacity-50 cursor-not-allowed" : ""
-              }`}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
             >
-              {loading
-                ? t.loading || "Submitting..."
-                : user
-                ? t.saveChanges || "Update"
-                : t.submit}
+              {user ? t.saveChanges || "Update" : t.submit}
             </button>
           </div>
         </form>

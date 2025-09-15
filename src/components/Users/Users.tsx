@@ -83,7 +83,7 @@ export const Users: React.FC<UsersProps> = ({ isDark }) => {
       {/* Brief alert */}
       {alert && (
         <div
-          className={`fixed top-10 right-56 px-4 py-2 rounded shadow-lg text-white z-50 ${
+          className={`fixed top-6 right-6 px-4 py-3 rounded-lg shadow-lg text-white z-50 transition-transform transform ${
             alert.type === "success"
               ? "bg-green-500"
               : alert.type === "error"
